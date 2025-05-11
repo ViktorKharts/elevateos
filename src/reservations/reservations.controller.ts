@@ -23,10 +23,10 @@ export class ReservationsController {
   }
 
   @Get()
-  findByAmenityId(@Query() reservationQuery: ReservationQuery) {
+  findByAmenityIdAndTimestamp(@Query() reservationQuery: ReservationQuery) {
     const { amenityId, timestamp } = reservationQuery;
 
-    return this.reservationsService.findOneByIdAndTimestamp(
+    return this.reservationsService.findOneByAmenityIdAndTimestamp(
       amenityId,
       timestamp,
     );

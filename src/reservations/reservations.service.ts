@@ -30,14 +30,14 @@ export class ReservationsService {
     return reservation;
   }
 
-  findOneByIdAndTimestamp(id: number, timestamp: number) {
-    const reservation = this.reservations.find(
-      (el) => el.id === id && el.startedAt === timestamp,
-    );
+  findOneByAmenityIdAndTimestamp(amenityId: string, timestamp: string) {
+    const reservation = this.reservations.find((el) => {
+      return el.amenityId === +amenityId && el.startedAt === +timestamp;
+    });
 
     if (!reservation) {
       throw new NotFoundException(
-        `Reservation #${id} and timestamp ${timestamp} not found.`,
+        `Reservation #${amenityId} and timestamp ${timestamp} not found.`,
       );
     }
 
