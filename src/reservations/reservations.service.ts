@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateReservationDto } from './dto/create-reservation.dto';
+import { Reservation } from './entities/reservation';
+import { UpdateReservationDto } from './dto/update-reservation.dto';
 
 @Injectable()
 export class ReservationsService {
-  private reservations = [
+  private reservations: Reservation[] = [
     {
       id: 1,
       userId: 123,
+      amenityId: 123,
       startedAt: Date.now(),
       duration: 120,
-      amenityName: 'Hello world',
+      isActive: true,
     },
   ];
 
@@ -16,29 +20,50 @@ export class ReservationsService {
     return this.reservations;
   }
 
-  findOne(id: number) {
-    return this.reservations.find((el) => el.id === id);
-  }
+  findOneById(id: string) {
+    const reservation = this.reservations.find((el) => el.id === +id);
 
-  findOneByIdAndTimestamp(id: number, timestamp: string) {
-    return this.reservations.find(
-      (el) => el.id === id && el.startedAt === +timestamp,
-    );
-  }
-
-  create(createReservationDto: any) {
-    this.reservations.push(createReservationDto);
-  }
-
-  update(id: number, updateReservationDto: any) {
-    const existingReservation = this.findOne(id);
-
-    if (existingReservation) {
-      // update reservation
+    if (!reservation) {
+      throw new NotFoundException(`Reservation #${id} not found.`);
     }
+
+    return reservation;
   }
 
-  remove(id: number) {
-    this.update(id, { isActive: false });
+  findOneByIdAndTimestamp(id: string, timestamp: string) {
+    const reservation = this.reservations.find(
+      (el) => el.id === +id && el.startedAt === +timestamp,
+    );
+
+    if (!reservation) {
+      throw new NotFoundException(
+        `Reservation #${id} and timestamp ${timestamp} not found.`,
+      );
+    }
+
+    return reservation;
+  }
+
+  create(createReservationDto: CreateReservationDto) {
+    this.reservations.push({
+      id: this.reservations.length,
+      ...createReservationDto,
+    });
+  }
+
+  update(id: string, updateReservationDto: UpdateReservationDto) {
+    const existingReservation = this.findOneById(id);
+    const index = this.reservations.indexOf(existingReservation);
+
+    this.reservations[index] = {
+      ...existingReservation,
+      ...updateReservationDto,
+    };
+
+    return this.reservations[index];
+  }
+
+  remove(id: string) {
+    return this.update(id, { isActive: false });
   }
 }

@@ -1,5 +1,17 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ReservationsService } from './reservations.service';
+import { CreateReservationDto } from './dto/create-reservation.dto';
+import { UpdateReservationDto } from './dto/update-reservation.dto';
+import { ReservationQuery } from './entities/reservation.query';
 
 @Controller('reservations')
 export class ReservationsController {
@@ -11,12 +23,30 @@ export class ReservationsController {
   }
 
   @Get()
-  findByAmenityId(@Query() reservationQuery: any) {
+  findByAmenityId(@Query() reservationQuery: ReservationQuery) {
     const { amenityId, timestamp } = reservationQuery;
 
     return this.reservationsService.findOneByIdAndTimestamp(
       amenityId,
       timestamp,
     );
+  }
+
+  @Post()
+  create(@Body() createReservationDto: CreateReservationDto) {
+    return this.reservationsService.create(createReservationDto);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateReservationDto: UpdateReservationDto,
+  ) {
+    return this.reservationsService.update(id, updateReservationDto);
+  }
+
+  @Delete(':id')
+  deleteById(@Param('id') id: string) {
+    return this.reservationsService.remove(id);
   }
 }
