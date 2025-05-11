@@ -1,4 +1,9 @@
+import { IsString } from 'class-validator';
+
 export class ReservationQuery {
-  readonly amenityId: string;
-  readonly timestamp: string;
+  @IsString()
+  readonly amenityId: number;
+
+  @IsString()
+  readonly timestamp: number;
 }

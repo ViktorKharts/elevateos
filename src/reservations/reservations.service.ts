@@ -10,7 +10,7 @@ export class ReservationsService {
       id: 1,
       userId: 123,
       amenityId: 123,
-      startedAt: Date.now(),
+      startedAt: 1746973010554,
       duration: 120,
       isActive: true,
     },
@@ -20,8 +20,8 @@ export class ReservationsService {
     return this.reservations;
   }
 
-  findOneById(id: string) {
-    const reservation = this.reservations.find((el) => el.id === +id);
+  findOneById(id: number) {
+    const reservation = this.reservations.find((el) => el.id === id);
 
     if (!reservation) {
       throw new NotFoundException(`Reservation #${id} not found.`);
@@ -30,9 +30,9 @@ export class ReservationsService {
     return reservation;
   }
 
-  findOneByIdAndTimestamp(id: string, timestamp: string) {
+  findOneByIdAndTimestamp(id: number, timestamp: number) {
     const reservation = this.reservations.find(
-      (el) => el.id === +id && el.startedAt === +timestamp,
+      (el) => el.id === id && el.startedAt === timestamp,
     );
 
     if (!reservation) {
@@ -46,12 +46,14 @@ export class ReservationsService {
 
   create(createReservationDto: CreateReservationDto) {
     this.reservations.push({
-      id: this.reservations.length,
+      id: this.reservations.length + 1,
       ...createReservationDto,
     });
+
+    return this.reservations.at(-1);
   }
 
-  update(id: string, updateReservationDto: UpdateReservationDto) {
+  update(id: number, updateReservationDto: UpdateReservationDto) {
     const existingReservation = this.findOneById(id);
     const index = this.reservations.indexOf(existingReservation);
 
@@ -63,7 +65,7 @@ export class ReservationsService {
     return this.reservations[index];
   }
 
-  remove(id: string) {
+  remove(id: number) {
     return this.update(id, { isActive: false });
   }
 }

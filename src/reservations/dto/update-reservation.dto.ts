@@ -1,7 +1,4 @@
-export class UpdateReservationDto {
-  readonly userId?: number;
-  readonly amenityId?: number;
-  readonly startedAt?: number;
-  readonly duration?: number;
-  readonly isActive?: boolean;
-}
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateReservationDto } from './create-reservation.dto';
+
+export class UpdateReservationDto extends PartialType(CreateReservationDto) {}
