@@ -8,9 +8,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesService } from './files.service';
 
 @Controller('file')
 export class FilesController {
+  constructor(private readonly fileService: FilesService) {}
+
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(
@@ -27,8 +30,6 @@ export class FilesController {
     )
     file: Express.Multer.File,
   ) {
-    console.log('file', file);
-    // console.log(file.buffer.toString('utf-8'));
-    return 'uploaded';
+    return this.fileService.parseFile(file.buffer.toString('utf-8'));
   }
 }
