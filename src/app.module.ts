@@ -4,11 +4,13 @@ import { AppService } from './app.service';
 import { ReservationsModule } from './reservations/reservations.module';
 import { AmenitiesModule } from './amenities/amenities.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
     ReservationsModule,
     AmenitiesModule,
+    FilesModule,
 
     TypeOrmModule.forRoot({
       type: 'postgres',
