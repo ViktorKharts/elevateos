@@ -6,6 +6,7 @@ import { AmenitiesModule } from './amenities/amenities.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FilesModule } from './files/files.module';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -24,6 +25,8 @@ import { UsersModule } from './users/users.module';
       autoLoadEntities: true,
       synchronize: true, // disable for prod
     }),
+
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
