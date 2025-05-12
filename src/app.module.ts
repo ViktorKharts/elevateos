@@ -18,7 +18,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       password: 'super-secret-ingredient',
       database: 'postgres',
       autoLoadEntities: true,
-      synchronize: true, // disable for prod
+      // synchronize: true, // disable for prod
     }),
   ],
   controllers: [AppController],

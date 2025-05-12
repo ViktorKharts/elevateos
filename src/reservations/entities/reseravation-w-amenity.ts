@@ -1,8 +1,7 @@
-export class Reservation {
+export class ReservationWithAmenity {
   id: number;
   userId: number;
-  amenityId: number;
+  name: string;
   startedAt: number;
   duration: number;
-  isActive: boolean;
 }

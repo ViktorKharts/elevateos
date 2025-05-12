@@ -1,27 +1,28 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { Reservation } from './entities/reservation';
+import { Reservation } from './entities/reservation.entity';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { amenityIdAndTimestampQuery } from './sql/find-by-amenity-and-timestmap';
+import { ReservationWithAmenity } from './entities/reseravation-w-amenity';
 
 @Injectable()
 export class ReservationsService {
-  private reservations: Reservation[] = [
-    {
-      id: 1,
-      userId: 123,
-      amenityId: 123,
-      startedAt: 1746973010554,
-      duration: 120,
-      isActive: true,
-    },
-  ];
+  constructor(
+    @InjectRepository(Reservation)
+    private readonly reservationRepository: Repository<Reservation>,
+    private readonly dataSource: DataSource,
+  ) {}
 
-  findAll() {
-    return this.reservations;
+  async findAll() {
+    return await this.reservationRepository.find();
   }
 
-  findOneById(id: number) {
-    const reservation = this.reservations.find((el) => el.id === id);
+  async findOneById(id: number) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id },
+    });
 
     if (!reservation) {
       throw new NotFoundException(`Reservation #${id} not found.`);
@@ -30,10 +31,11 @@ export class ReservationsService {
     return reservation;
   }
 
-  findOneByAmenityIdAndTimestamp(amenityId: string, timestamp: string) {
-    const reservation = this.reservations.find((el) => {
-      return el.amenityId === +amenityId && el.startedAt === +timestamp;
-    });
+  async findOneByAmenityIdAndTimestamp(amenityId: string, timestamp: string) {
+    const reservation =
+      await this.dataSource.manager.query<ReservationWithAmenity>(
+        amenityIdAndTimestampQuery(+amenityId, +timestamp),
+      );
 
     if (!reservation) {
       throw new NotFoundException(
@@ -44,25 +46,24 @@ export class ReservationsService {
     return reservation;
   }
 
-  create(createReservationDto: CreateReservationDto) {
-    this.reservations.push({
-      id: this.reservations.length + 1,
-      ...createReservationDto,
-    });
+  async create(createReservationDto: CreateReservationDto) {
+    const reservation = this.reservationRepository.create(createReservationDto);
+    await this.reservationRepository.save(reservation);
 
-    return this.reservations.at(-1);
+    return reservation;
   }
 
-  update(id: number, updateReservationDto: UpdateReservationDto) {
-    const existingReservation = this.findOneById(id);
-    const index = this.reservations.indexOf(existingReservation);
-
-    this.reservations[index] = {
-      ...existingReservation,
+  async update(id: number, updateReservationDto: UpdateReservationDto) {
+    const reservation = await this.reservationRepository.preload({
+      id,
       ...updateReservationDto,
-    };
+    });
 
-    return this.reservations[index];
+    if (!reservation) {
+      throw new NotFoundException(`Reservation #${id} not found.`);
+    }
+
+    return reservation;
   }
 
   remove(id: number) {

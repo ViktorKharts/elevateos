@@ -1,20 +1,25 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAmenityDto } from './dto/create-amenity.dto';
-import { Amenity } from './entities/amenity';
 import { UpdateAmenityDto } from './dto/update-amenity.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Amenity } from './entities/amenity.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AmenitiesService {
-  private amenities: Amenity[] = [
-    {
-      id: 1,
-      name: 'Hello world',
-      isActive: true,
-    },
-  ];
+  constructor(
+    @InjectRepository(Amenity)
+    private readonly amenityRepository: Repository<Amenity>,
+  ) {}
 
-  findOneById(id: number) {
-    const amenity = this.amenities.find((el) => el.id === id);
+  async findAll() {
+    return await this.amenityRepository.find();
+  }
+
+  async findOneById(id: number) {
+    const amenity = await this.amenityRepository.findOne({
+      where: { id },
+    });
 
     if (!amenity) {
       throw new NotFoundException(`No #${id} amenity was found.`);
@@ -23,8 +28,8 @@ export class AmenitiesService {
     return amenity;
   }
 
-  findOneByName(name: string) {
-    const amenity = this.amenities.find((el) => el.name === name);
+  async findOneByName(name: string) {
+    const amenity = await this.amenityRepository.findOne({ where: { name } });
 
     if (!amenity) {
       throw new NotFoundException(`No ${name} amenity was found.`);
@@ -33,31 +38,26 @@ export class AmenitiesService {
     return amenity;
   }
 
-  findAll() {
-    return this.amenities;
+  async create(createAmenityDto: CreateAmenityDto) {
+    const amenity = this.amenityRepository.create(createAmenityDto);
+    await this.amenityRepository.save(amenity);
+
+    return amenity;
   }
 
-  create(body: CreateAmenityDto) {
-    const amenity = {
-      id: this.amenities.length + 1,
-      ...body,
-    };
+  async update(id: number, updateAmenityDto: UpdateAmenityDto) {
+    const amenity = await this.amenityRepository.preload({
+      id,
+      ...updateAmenityDto,
+    });
 
-    this.amenities.push(amenity);
+    if (!amenity) {
+      throw new NotFoundException(`No #${id} amenity was found.`);
+    }
 
-    return this.amenities.at(-1);
-  }
+    await this.amenityRepository.save(amenity);
 
-  update(id: number, body: UpdateAmenityDto) {
-    const amenity = this.findOneById(id);
-    const index = this.amenities.indexOf(amenity);
-
-    this.amenities[index] = {
-      ...amenity,
-      ...body,
-    };
-
-    return this.amenities;
+    return amenity;
   }
 
   remove(id: number) {
