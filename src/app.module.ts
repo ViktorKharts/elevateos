@@ -5,12 +5,14 @@ import { ReservationsModule } from './reservations/reservations.module';
 import { AmenitiesModule } from './amenities/amenities.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FilesModule } from './files/files.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     ReservationsModule,
     AmenitiesModule,
     FilesModule,
+    UsersModule,
 
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -20,7 +22,7 @@ import { FilesModule } from './files/files.module';
       password: 'super-secret-ingredient',
       database: 'postgres',
       autoLoadEntities: true,
-      // synchronize: true, // disable for prod
+      synchronize: true, // disable for prod
     }),
   ],
   controllers: [AppController],
