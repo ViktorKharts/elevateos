@@ -16,17 +16,24 @@ import { AuthDecorator } from 'src/auth/authentication/decorators/auth.decorator
 import { AuthType } from 'src/auth/authentication/enums/auth-type.enum';
 import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
 import { ReservationWithAmenity } from './entities/reseravation-w-amenity';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('reservations')
 export class ReservationsController {
   constructor(private reservationsService: ReservationsService) {}
 
+  @ApiResponse({ status: 200, description: 'Returns all stored reservations.' })
   @AuthDecorator(AuthType.NONE)
   @Get('/all')
   findAll() {
     return this.reservationsService.findAll();
   }
 
+  @ApiResponse({
+    status: 200,
+    description:
+      'Returns reservations with the specified Amenity and starting time.',
+  })
   @Get()
   findByAmenityIdAndTimestamp(
     @Query() reservationQuery: ReservationQuery,
@@ -39,22 +46,40 @@ export class ReservationsController {
     );
   }
 
+  @ApiResponse({
+    status: 200,
+    description:
+      "Returns all the available reservations for the provided user. Doesn't require authentication.",
+  })
   @AuthDecorator(AuthType.NONE)
   @Get('user/:userId')
   findAllByUserId(@Param('userId') userId: number) {
     return this.reservationsService.findAllByUserId(userId);
   }
 
+  @ApiResponse({
+    status: 200,
+    description:
+      'Returns all the available reservations for the currently authenticated user.',
+  })
   @Get('for-current-user')
   findForThisUser(@ActiveUser('sub') userId: number) {
     return this.reservationsService.findAllByUserId(userId);
   }
 
+  @ApiResponse({
+    status: 201,
+    description: 'Creates a new reservation.',
+  })
   @Post()
   create(@Body() createReservationDto: CreateReservationDto) {
     return this.reservationsService.create(createReservationDto);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Provides changes to an existing reservation.',
+  })
   @Patch(':id')
   update(
     @Param('id') id: number,
@@ -63,6 +88,10 @@ export class ReservationsController {
     return this.reservationsService.update(id, updateReservationDto);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Deletes an existing reservation.',
+  })
   @Delete(':id')
   deleteById(@Param('id') id: number) {
     return this.reservationsService.remove(id);
