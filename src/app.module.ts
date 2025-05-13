@@ -7,14 +7,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FilesModule } from './files/files.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    ReservationsModule,
-    AmenitiesModule,
-    FilesModule,
-    UsersModule,
-
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -26,6 +22,12 @@ import { AuthModule } from './auth/auth.module';
       synchronize: true, // disable for prod
     }),
 
+    ConfigModule.forRoot(),
+
+    ReservationsModule,
+    AmenitiesModule,
+    FilesModule,
+    UsersModule,
     AuthModule,
   ],
   controllers: [AppController],
