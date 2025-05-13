@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { amenityIdAndTimestampQuery } from './sql/find-by-amenity-and-timestmap';
 import { ReservationWithAmenity } from './entities/reseravation-w-amenity';
+import { findAllByUserIdQuery } from './sql/find-all-by-user-id';
 
 @Injectable()
 export class ReservationsService {
@@ -17,6 +18,18 @@ export class ReservationsService {
 
   async findAll() {
     return await this.reservationRepository.find();
+  }
+
+  async findAllByUserId(id: number) {
+    const reservations = await this.dataSource.manager.query<Reservation[]>(
+      findAllByUserIdQuery(id),
+    );
+
+    if (!reservations.length) {
+      throw new NotFoundException('This user has no reservations.');
+    }
+
+    return reservations;
   }
 
   async findOneById(id: number) {

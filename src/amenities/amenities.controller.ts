@@ -10,16 +10,20 @@ import {
 import { AmenitiesService } from './amenities.service';
 import { CreateAmenityDto } from './dto/create-amenity.dto';
 import { UpdateAmenityDto } from './dto/update-amenity.dto';
+import { AuthDecorator } from 'src/auth/authentication/decorators/auth.decorator';
+import { AuthType } from 'src/auth/authentication/enums/auth-type.enum';
 
 @Controller('amenities')
 export class AmenitiesController {
   constructor(private amenitiesService: AmenitiesService) {}
 
+  @AuthDecorator(AuthType.NONE)
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.amenitiesService.findOneById(id);
   }
 
+  @AuthDecorator(AuthType.NONE)
   @Get()
   findAll() {
     return this.amenitiesService.findAll();
