@@ -12,6 +12,7 @@ import { SignUpDto } from './dto/sign-up.dto';
 import { Response } from 'express';
 import { AuthDecorator } from './decorators/auth.decorator';
 import { AuthType } from './enums/auth-type.enum';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @AuthDecorator(AuthType.NONE)
 @Controller('authentication')
@@ -30,10 +31,16 @@ export class AuthenticationController {
     @Res({ passthrough: true }) response: Response,
   ) {
     const token = await this.authenticationService.signIn(signInDto);
-    response.cookie('accessToken', token, {
+    response.cookie('accessToken', token.accessToken, {
       secure: true,
       httpOnly: true,
       sameSite: true,
     });
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('refresh-tokens')
+  refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authenticationService.refreshTokens(refreshTokenDto);
   }
 }

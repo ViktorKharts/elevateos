@@ -6,5 +6,6 @@ export default registerAs('jwt', () => {
     audience: 'localhost:8080',
     issuer: 'localhost:8080',
     accessTokenTtl: 3600,
+    refreshTokenTtl: 86400,
   };
 });

@@ -14,6 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import jwtConfig from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Injectable()
 export class AuthenticationService {
@@ -63,19 +64,59 @@ export class AuthenticationService {
       throw new UnauthorizedException('Email or password are incorrect.');
     }
 
-    const accessToken = await this.jwtService.signAsync(
+    return this.generateTokens(user);
+  }
+
+  async generateTokens(user: User) {
+    const [accessToken, refreshToken] = await Promise.all([
+      await this.signToken<Partial<ActiveUserData>>({
+        userId: user.id,
+        expiresIn: this.jwtConfiguration.accessTokenTtl,
+        payload: { email: user.email },
+      }),
+      await this.signToken({
+        userId: user.id,
+        expiresIn: this.jwtConfiguration.refreshTokenTtl,
+      }),
+    ]);
+
+    return { accessToken, refreshToken };
+  }
+
+  async refreshTokens(refreshTokenDto: RefreshTokenDto) {
+    try {
+      const { sub } = await this.jwtService.verifyAsync<
+        Pick<ActiveUserData, 'sub'>
+      >(refreshTokenDto.refreshToken, {
+        secret: this.jwtConfiguration.secret,
+        audience: this.jwtConfiguration.audience,
+        issuer: this.jwtConfiguration.issuer,
+      });
+
+      const user = await this.userRepository.findOneOrFail({ id: sub });
+
+      return this.generateTokens(user);
+    } catch {
+      throw new UnauthorizedException();
+    }
+  }
+
+  private async signToken<T>(params: {
+    userId: number;
+    expiresIn: number;
+    payload?: T;
+  }) {
+    return this.jwtService.signAsync(
       {
-        sub: user.id,
-        email: user.email,
-      } as ActiveUserData,
+        sub: params.userId,
+        ...params.payload,
+      },
       {
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
         secret: this.jwtConfiguration.secret,
-        expiresIn: this.jwtConfiguration.accessTokenTtl,
+        expiresIn: params.expiresIn,
       },
     );
-
-    return accessToken;
   }
 }
