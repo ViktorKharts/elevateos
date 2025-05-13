@@ -75,8 +75,6 @@ export class AuthenticationService {
       },
     );
 
-    return {
-      accessToken,
-    };
+    return accessToken;
   }
 }

@@ -10,7 +10,10 @@ import { AuthenticationService } from './authentication.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { Response } from 'express';
+import { AuthDecorator } from './decorators/auth.decorator';
+import { AuthType } from './enums/auth-type.enum';
 
+@AuthDecorator(AuthType.NONE)
 @Controller('authentication')
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
