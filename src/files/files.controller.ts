@@ -9,11 +9,16 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('file')
 export class FilesController {
   constructor(private readonly fileService: FilesService) {}
 
+  @ApiResponse({
+    status: 201,
+    description: 'Returns contents of the provided CSV file.',
+  })
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(
