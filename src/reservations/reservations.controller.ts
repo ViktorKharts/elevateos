@@ -15,6 +15,7 @@ import { ReservationQuery } from './entities/reservation.query';
 import { AuthDecorator } from 'src/auth/authentication/decorators/auth.decorator';
 import { AuthType } from 'src/auth/authentication/enums/auth-type.enum';
 import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
+import { ReservationWithAmenity } from './entities/reseravation-w-amenity';
 
 @Controller('reservations')
 export class ReservationsController {
@@ -27,7 +28,9 @@ export class ReservationsController {
   }
 
   @Get()
-  findByAmenityIdAndTimestamp(@Query() reservationQuery: ReservationQuery) {
+  findByAmenityIdAndTimestamp(
+    @Query() reservationQuery: ReservationQuery,
+  ): Promise<ReservationWithAmenity> {
     const { amenityId, timestamp } = reservationQuery;
 
     return this.reservationsService.findOneByAmenityIdAndTimestamp(

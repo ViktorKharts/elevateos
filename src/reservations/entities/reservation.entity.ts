@@ -1,6 +1,3 @@
-// import { Amenity } from 'src/amenities/entities/amenity.entity';
-// import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -10,9 +7,6 @@ export class Reservation {
 
   @Column()
   userId: number;
-
-  // @ManyToOne(() => Amenity, (amenity) => amenity.reservations)
-  // amenity: Amenity;
 
   @Column()
   amenityId: number;
