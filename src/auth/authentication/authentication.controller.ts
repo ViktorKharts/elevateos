@@ -36,6 +36,8 @@ export class AuthenticationController {
       httpOnly: true,
       sameSite: true,
     });
+
+    return { refreshToken: token.refreshToken };
   }
 
   @HttpCode(HttpStatus.OK)
