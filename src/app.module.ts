@@ -18,7 +18,6 @@ import { ConfigModule } from '@nestjs/config';
       password: 'super-secret-ingredient',
       database: 'postgres',
       autoLoadEntities: true,
-      synchronize: true, // disable for prod
     }),
 
     ConfigModule.forRoot(),
