@@ -16,7 +16,7 @@ import { AuthDecorator } from 'src/auth/authentication/decorators/auth.decorator
 import { AuthType } from 'src/auth/authentication/enums/auth-type.enum';
 import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
 import { ReservationWithAmenity } from './entities/reseravation-w-amenity';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiQuery, ApiResponse } from '@nestjs/swagger';
 
 @Controller('reservations')
 export class ReservationsController {
@@ -34,6 +34,8 @@ export class ReservationsController {
     description:
       'Returns reservations with the specified Amenity and starting time.',
   })
+  @ApiQuery({ name: 'timestmap', example: '2022-06-12' })
+  @ApiQuery({ name: 'amenityId', example: 1 })
   @Get()
   findByAmenityIdAndTimestamp(
     @Query() reservationQuery: ReservationQuery,
