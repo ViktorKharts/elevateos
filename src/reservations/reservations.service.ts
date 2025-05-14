@@ -47,7 +47,7 @@ export class ReservationsService {
   async findOneByAmenityIdAndTimestamp(amenityId: string, timestamp: string) {
     const reservation =
       await this.dataSource.manager.query<ReservationWithAmenity>(
-        amenityIdAndTimestampQuery(+amenityId, +timestamp),
+        amenityIdAndTimestampQuery(+amenityId, timestamp),
       );
 
     if (!reservation) {
@@ -81,5 +81,9 @@ export class ReservationsService {
 
   remove(id: number) {
     return this.update(id, { isActive: false });
+  }
+
+  private convertTimestampIntoDate(timestamp: string) {
+    return new Date(Number(timestamp)).toISOString().split('T')[0];
   }
 }

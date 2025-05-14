@@ -1,11 +1,10 @@
 export const amenityIdAndTimestampQuery = (
   amenityId: number,
-  timestamp: number,
+  timestamp: string,
 ) => `
-      SELECT r.id, r."userId", r."startedAt", r.duration, a.name
+      SELECT r.id, r.user_id, r.date, a.name
       FROM reservation AS r
       LEFT JOIN amenity AS a
-      ON r."amenityId" = a.id
-      WHERE r."amenityId" = ${amenityId} AND r."startedAt" = ${timestamp};
+      ON r.amenity_id = a.id
+      WHERE r.amenity_id = ${amenityId} AND r.date = '${timestamp}';
 `;
-

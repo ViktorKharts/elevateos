@@ -5,18 +5,21 @@ export class Reservation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ name: 'user_id' })
   userId: number;
 
-  @Column()
+  @Column({ name: 'amenity_id' })
   amenityId: number;
 
-  @Column()
-  startedAt: number;
+  @Column({ name: 'start_time' })
+  startsAt: number;
 
-  @Column()
-  duration: number;
+  @Column({ name: 'end_time' })
+  endsAt: number;
 
-  @Column()
+  @Column({ type: 'date' })
+  date: string;
+
+  @Column({ name: 'is_active' })
   isActive: boolean;
 }

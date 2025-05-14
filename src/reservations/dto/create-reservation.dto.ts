@@ -1,4 +1,5 @@
-import { IsBoolean, IsNumber } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateReservationDto {
   @IsNumber()
@@ -8,11 +9,16 @@ export class CreateReservationDto {
   readonly amenityId: number;
 
   @IsNumber()
-  readonly startedAt: number;
+  readonly startsAt: number;
 
   @IsNumber()
-  readonly duration: number;
+  readonly endsAt: number;
 
+  @IsString()
+  readonly date: string;
+
+  @ApiProperty({ description: 'Should be provided in yyyy-mm-dd format.' })
   @IsBoolean()
+  @IsOptional()
   readonly isActive: boolean;
 }
