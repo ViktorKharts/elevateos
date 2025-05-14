@@ -8,6 +8,6 @@ export class Amenity {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ name: 'is_active' })
   isActive: boolean;
 }
