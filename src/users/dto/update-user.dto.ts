@@ -5,5 +5,5 @@ export class UpdateUserDto {
   email?: string;
 
   @IsOptional()
-  isActive?: boolean;
+  password?: string;
 }

@@ -39,6 +39,6 @@ export class UsersService {
   }
 
   async remove(id: number) {
-    return this.update(id, { isActive: false });
+    return await this.userRepository.delete({ id });
   }
 }
