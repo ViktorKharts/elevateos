@@ -3,11 +3,12 @@ import { DataSource } from 'typeorm';
 
 export default new DataSource({
   type: 'postgres',
-  host: 'localhost',
-  port: 5432,
+  host: process.env.POSTGRES_HOST || 'localhost',
+  port: (process.env.POSTGRES_PORT as number | undefined) || 5432,
   username: 'postgres',
   password: 'super-secret-ingredient',
   database: 'postgres',
+  synchronize: false,
   entities: [],
   migrations: [InitialMigration1747200723927],
 });
